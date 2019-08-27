@@ -28,13 +28,13 @@
     const { render } = ReactDOM;
     const { HashRouter, Route, Switch, Link, NavLink, Redirect } = ReactRouterDOM;
 
-    const Nav = ({ underTen, tenAndOver }) => {
+    const Nav = ({ underTen, tenAndOver, path }) => {
       return (
         <div>
           <h1>Acme 10 - Over / Under</h1>
           <nav>
-            <Link to='/under10'>Under 10 ({ underTen.length })</Link>
-            <Link to='/10AndOver'>10 and Over ({ tenAndOver.length })</Link>
+            <Link to='/under10' className={ path === '/under10' ? 'selected' : ''}>Under 10 ({ underTen.length })</Link>
+            <Link to='/10AndOver' className={ path === '/10AndOver' ? 'selected' : ''}>10 and Over ({ tenAndOver.length })</Link>
           </nav>
         </div>
       );
@@ -94,7 +94,7 @@
         console.log(underTen)
         return (
           <HashRouter>
-            <Route render={ ()=> <Nav underTen={ underTen } tenAndOver={ tenAndOver }/> } />
+            <Route render={ ({ location })=> <Nav path={ location.pathname } underTen={ underTen } tenAndOver={ tenAndOver }/> } />
             <Switch>
               <Route path='/under10' render={()=> <UnderTen underTen={ underTen }/> } />
               <Route path='/10AndOver' render={()=> <TenAndOver tenAndOver={ tenAndOver }/> } />
