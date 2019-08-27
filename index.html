@@ -28,26 +28,26 @@
     const { render } = ReactDOM;
     const { HashRouter, Route, Switch, Link, NavLink, Redirect } = ReactRouterDOM;
 
-    const Nav = ({ underTen, tenAndOver, path }) => {
+    const Nav = ({ underFive, fiveAndOver, path }) => {
       return (
         <div>
-          <h1>Acme 10 - Over / Under</h1>
+          <h1>Acme 5 - Over / Under</h1>
           <nav>
-            <Link to='/under10' className={ path === '/under10' ? 'selected' : ''}>Under 10 ({ underTen.length })</Link>
-            <Link to='/10AndOver' className={ path === '/10AndOver' ? 'selected' : ''}>10 and Over ({ tenAndOver.length })</Link>
+            <Link to='/under5' className={ path === '/under5' ? 'selected' : ''}>Under 5 ({ underFive.length })</Link>
+            <Link to='/5AndOver' className={ path === '/5AndOver' ? 'selected' : ''}>5 and Over ({ fiveAndOver.length })</Link>
           </nav>
         </div>
       );
     }
 
-    const UnderTen = ({ underTen }) => {
+    const UnderFive = ({ underFive }) => {
       return (
         <div>
           <ul>
             {
-              underTen.map( (product, idx) =>
+              underFive.map( (product, idx) =>
               <li key={idx}>
-                <div>{ product.name}</div>
+                <div><Link to={`/products/${product.id}`} > { product.name}</Link></div>
                 <div>{ product.suggestedPrice }</div>
               </li>
               )
@@ -57,14 +57,14 @@
       );
     }
 
-    const TenAndOver = ({ tenAndOver }) => {
+    const FiveAndOver = ({ fiveAndOver }) => {
       return (
         <div>
           <ul>
             {
-              tenAndOver.map( (product, idx) =>
+              fiveAndOver.map( (product, idx) =>
               <li key={idx}>
-                <div>{ product.name}</div>
+                <div><Link to={`/products/${product.id}`} >{ product.name}</Link></div>
                 <div>{ product.suggestedPrice }</div>
               </li>
               )
@@ -78,26 +78,26 @@
       constructor(){
         super();
         this.state = {
-          underTen: [],
-          tenAndOver: []
+          underFive: [],
+          fiveAndOver: []
         };
       }
       async componentDidMount(){
         const products = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/products')).data;
         console.log('products', products)
-        const underTen = products.filter( product => product.suggestedPrice < 10 );
-        const tenAndOver = products.filter( product => product.suggestedPrice >= 10 );
-        this.setState({underTen, tenAndOver})
+        const underFive = products.filter( product => product.suggestedPrice < 5 );
+        const fiveAndOver = products.filter( product => product.suggestedPrice >= 5 );
+        this.setState({underFive, fiveAndOver})
       }
       render(){
-        const { underTen, tenAndOver } = this.state;
-        console.log(underTen)
+        const { underFive, fiveAndOver } = this.state;
+        console.log('underFive', underFive)
         return (
           <HashRouter>
-            <Route render={ ({ location })=> <Nav path={ location.pathname } underTen={ underTen } tenAndOver={ tenAndOver }/> } />
+            <Route render={ ({ location })=> <Nav path={ location.pathname } underFive={ underFive } fiveAndOver={ fiveAndOver }/> } />
             <Switch>
-              <Route path='/under10' render={()=> <UnderTen underTen={ underTen }/> } />
-              <Route path='/10AndOver' render={()=> <TenAndOver tenAndOver={ tenAndOver }/> } />
+              <Route path='/under5' render={()=> <UnderFive underFive={ underFive }/> } />
+              <Route path='/5AndOver' render={()=> <FiveAndOver fiveAndOver={ fiveAndOver }/> } />
             </Switch>
           </HashRouter>
         );
