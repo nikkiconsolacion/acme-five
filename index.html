@@ -6,6 +6,19 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.min.js"></script>
     <style>
+      body {
+        font-family: verdana;
+      }
+      nav {
+        display: flex;
+        justify-content: space-around;
+      }
+      .selected {
+        background-color: tomato;
+        color: white;
+        padding: .25rem;
+        border-radius: .2rem;
+      }
     </style>
   </head>
   <body>
@@ -15,15 +28,79 @@
     const { render } = ReactDOM;
     const { HashRouter, Route, Switch, Link, NavLink, Redirect } = ReactRouterDOM;
 
+    const Nav = ({ underTen, tenAndOver }) => {
+      return (
+        <div>
+          <h1>Acme 10 - Over / Under</h1>
+          <nav>
+            <Link to='/under10'>Under 10 ({ underTen.length })</Link>
+            <Link to='/10AndOver'>10 and Over ({ tenAndOver.length })</Link>
+          </nav>
+        </div>
+      );
+    }
+
+    const UnderTen = ({ underTen }) => {
+      return (
+        <div>
+          <ul>
+            {
+              underTen.map( (product, idx) =>
+              <li key={idx}>
+                <div>{ product.name}</div>
+                <div>{ product.suggestedPrice }</div>
+              </li>
+              )
+            }
+          </ul>
+        </div>
+      );
+    }
+
+    const TenAndOver = ({ tenAndOver }) => {
+      return (
+        <div>
+          <ul>
+            {
+              tenAndOver.map( (product, idx) =>
+              <li key={idx}>
+                <div>{ product.name}</div>
+                <div>{ product.suggestedPrice }</div>
+              </li>
+              )
+            }
+          </ul>
+        </div>
+      );
+    }
+
     class App extends Component{
       constructor(){
         super();
         this.state = {
-
-        }
+          underTen: [],
+          tenAndOver: []
+        };
+      }
+      async componentDidMount(){
+        const products = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/products')).data;
+        console.log('products', products)
+        const underTen = products.filter( product => product.suggestedPrice < 10 );
+        const tenAndOver = products.filter( product => product.suggestedPrice >= 10 );
+        this.setState({underTen, tenAndOver})
       }
       render(){
-        return <hr />
+        const { underTen, tenAndOver } = this.state;
+        console.log(underTen)
+        return (
+          <HashRouter>
+            <Route render={ ()=> <Nav underTen={ underTen } tenAndOver={ tenAndOver }/> } />
+            <Switch>
+              <Route path='/under10' render={()=> <UnderTen underTen={ underTen }/> } />
+              <Route path='/10AndOver' render={()=> <TenAndOver tenAndOver={ tenAndOver }/> } />
+            </Switch>
+          </HashRouter>
+        );
       }
     }
 
