@@ -19,6 +19,9 @@
         padding: .25rem;
         border-radius: .2rem;
       }
+      .price {
+        padding: 0.5rem;
+      }
     </style>
   </head>
   <body>
@@ -40,15 +43,16 @@
       );
     }
 
-    const UnderFive = ({ underFive }) => {
+    const UnderFive = ({ underFive, path }) => {
+      console.log('path', path)
       return (
         <div>
           <ul>
             {
               underFive.map( (product, idx) =>
               <li key={idx}>
-                <div><Link to={`/products/under5/${product.id}`} > { product.name}</Link></div>
-                <div>{ product.suggestedPrice }</div>
+                <div><Link to={`/products/under5/${product.id}`} className={ path === `/products/under5/${product.id}` ? 'selected' : ''}> { product.name }</Link></div>
+                <div className='price'>{ product.suggestedPrice }.00 </div>
               </li>
               )
             }
@@ -58,15 +62,15 @@
       );
     }
 
-    const FiveAndOver = ({ fiveAndOver }) => {
+    const FiveAndOver = ({ fiveAndOver, path }) => {
       return (
         <div>
           <ul>
             {
               fiveAndOver.map( (product, idx) =>
               <li key={idx}>
-                <div><Link to={`/products/5AndOver/${product.id}`} >{ product.name}</Link></div>
-                <div>{ product.suggestedPrice }</div>
+                <div><Link to={`/products/5AndOver/${product.id}`} className={ path === `/products/5AndOver/${product.id}` ? 'selected' : ''}>{ product.name}</Link></div>
+                <div className='price'>{ product.suggestedPrice }.00</div>
               </li>
               )
             }
@@ -155,8 +159,8 @@
           <HashRouter>
             <Route render={ ({ location })=> <Nav path={ location.pathname } underFive={ underFive } fiveAndOver={ fiveAndOver }/> } />
             <Switch>
-              <Route path='/products/under5/:id?' render={(props)=> <UnderFive {...props} underFive={ underFive }/> } />
-              <Route path='/products/5AndOver/:id?' render={(props)=> <FiveAndOver {...props} fiveAndOver={ fiveAndOver }/> } />
+              <Route path='/products/under5/:id?' render={({ location })=> <UnderFive path={ location.pathname } underFive={ underFive }/> } />
+              <Route path='/products/5AndOver/:id?' render={({ location })=> <FiveAndOver path={ location.pathname } fiveAndOver={ fiveAndOver }/> } />
             </Switch>
           </HashRouter>
         );
