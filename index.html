@@ -87,7 +87,6 @@
         };
       }
       async componentDidMount(){
-        const id = this.props.match.params.id;
         const offerings = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/offerings')).data;
         const companies = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/companies')).data;
         const products = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/products')).data;
@@ -102,28 +101,35 @@
 
           return {...product, _offerings }
         });
-        console.log('processedProducts', processedProducts)
+        //console.log('processedProducts', processedProducts)
         this.setState({ offerings, companies, products, processedProducts });
       }
       render(){
+        const id = this.props.match.params.id;
+        //console.log('id', id)
         const { offerings, companies, products, processedProducts } = this.state;
+        const product = processedProducts.find( product => product.id === id);
+        //console.log('product', product)
+        if(!product){
+          return null
+        }
+        //console.log('product._offerings', product._offerings)
         return (
           <div>
             <ul>
               {
-                processedProducts.map( product =>
-
-                    <li key={product.id}>
-                      <div>Offered at { product._offerings.map(offering => offering.price)}</div>
-                      <div>by company name{ }</div>
+                product._offerings.map( offering =>
+                    <li key={offering.id}>
+                      <div>Offered at { offering.price }</div>
+                      <div>by company name { offering.companyName }</div>
                       <hr />
                     </li>
-
                 )
               }
             </ul>
           </div>
         )
+
       }
     }
 
